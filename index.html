@@ -293,6 +293,38 @@
           </div>
 
           <div class="row">
+  <div>
+    <label for="titleText">Title (packaging label / optional)</label>
+    <input id="titleText" type="text" placeholder='Example: "Obsession Infusion"' maxlength="60" />
+  </div>
+
+  <div>
+    <label for="subtitleText">Subtitle (packaging label / optional)</label>
+    <input id="subtitleText" type="text" placeholder='Example: "Side Effects: Possessive Behavior"' maxlength="80" />
+  </div>
+</div>
+
+<div class="row">
+  <div>
+    <label for="spice">Spice Level (1–5)</label>
+    <select id="spice">
+      <option value="1">🌶 1 — Slow Burn</option>
+      <option value="2">🌶🌶 2 — Heated Tension</option>
+      <option value="3" selected>🌶🌶🌶 3 — High Heat</option>
+      <option value="4">🌶🌶🌶🌶 4 — After Dark</option>
+      <option value="5">🌶🌶🌶🌶🌶 5 — Uncensored (implied)</option>
+    </select>
+  </div>
+
+  <div>
+    <label class="toggle" style="margin-top: 22px;">
+      <input id="spiceStamp" type="checkbox" checked />
+      Add “Mature/After Dark” stamp to prompt
+    </label>
+  </div>
+</div>
+
+          <div class="row">
             <div>
               <label for="vibe">Vibe</label>
               <select id="vibe">
