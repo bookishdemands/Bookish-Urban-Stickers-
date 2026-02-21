@@ -553,6 +553,41 @@
         : "centered composition, bold high-contrast text, clear legible typography, no distorted letters";
     }
 
+    function spiceProfile(level){
+  const L = String(level);
+
+  // Implied, not explicit. This stays within your “after dark” vibe without graphic content.
+  const map = {
+    "1": {
+      name: "Slow Burn",
+      vibe: "slow-burn tension, romantic yearning, intimate vibe",
+      stamp: ""
+    },
+    "2": {
+      name: "Heated Tension",
+      vibe: "heated tension, jealous undertones, close-proximity energy",
+      stamp: ""
+    },
+    "3": {
+      name: "High Heat",
+      vibe: "high-heat chemistry, dominant energy, possessive tone",
+      stamp: "warning label accent"
+    },
+    "4": {
+      name: "After Dark",
+      vibe: "after-dark mood, private suite energy, mature tone",
+      stamp: "18+ mature readers only stamp"
+    },
+    "5": {
+      name: "Uncensored (implied)",
+      vibe: "unfiltered obsession energy, high-risk vibe, adults only tone",
+      stamp: "adults only stamp"
+    }
+  };
+
+  return map[L] || map["3"];
+}
+    
     // ---- Product Templates (all the stuff you asked across the chat) ----
     const PRODUCT_TEMPLATES = {
       iv_bag: {
@@ -645,26 +680,31 @@
     };
 
     // ---- Fixed "house style" lock (now includes outline toggle + ideogram typography) ----
-    function houseStyle(borderChoice, outlineChoice, enhancedType){
-      const border = (borderChoice.startsWith("White")) ? "add a clean white sticker border/offset outline" : "no border";
-      const outline = (outlineChoice.startsWith("Thick"))
-        ? "thick bold black outline"
-        : "no outline";
+    function houseStyle(borderChoice, outlineChoice, enhancedType, spiceLevel, spiceStampOn){
+  const border = (borderChoice.startsWith("White")) ? "add a clean white sticker border/offset outline" : "no border";
+  const outline = (outlineChoice.startsWith("Thick"))
+    ? "thick bold black outline"
+    : "no outline";
 
-      return [
-        outline,
-        typographyBlock(enhancedType),
-        "clean doodle clipart illustration",
-        "rounded cute shapes",
-        "minimal flat shading",
-        "subtle grain texture",
-        "crisp edges, vector-like clarity",
-        border,
-        "transparent background",
-        "high resolution"
-      ].join(", ");
-    }
+  const spice = spiceProfile(spiceLevel);
+  const spiceBits = spiceStampOn
+    ? `${spice.vibe}, ${spice.stamp}`
+    : `${spice.vibe}`;
 
+  return [
+    outline,
+    typographyBlock(enhancedType),
+    spiceBits,
+    "clean doodle clipart illustration",
+    "rounded cute shapes",
+    "minimal flat shading",
+    "subtle grain texture",
+    "crisp edges, vector-like clarity",
+    border,
+    "transparent background",
+    "high resolution"
+  ].join(", ");
+}
     function paletteText(p){
       switch(p){
         case "Caramel + Gold + Black":
@@ -687,28 +727,51 @@
     }
 
     // ---- Build ONE prompt (Icon flow OR Product/Packaging flow) ----
-    function buildSinglePrompt({ genre, vibe, type, object, accents, palette, border, outline, useRandom, enhancedType, selectedProducts, index }){
-      const locked = houseStyle(border, outline, enhancedType);
+    function buildSinglePrompt({
+  genre, vibe, type, object, accents, palette, border, outline,
+  useRandom, enhancedType, selectedProducts, index,
+  spiceLevel, spiceStampOn, userTitle, userSubtitle
+}){
+  const locked = houseStyle(border, outline, enhancedType, spiceLevel, spiceStampOn);
 
-      // choose label/quote text
-      let text = document.getElementById("quote").value.trim();
-      if(useRandom || !text){
-        // if product types selected, prefer genre defaults (label+subtitle); else use quotes
-        if(selectedProducts.length){
-          const pick = getRandom(GENRE_DEFAULTS[genre] || GENRE_DEFAULTS.urban_fiction);
-          return buildPackagingPrompt({
-            locked,
-            palette,
-            accents,
-            productKey: selectedProducts[index % selectedProducts.length],
-            title: pick[0],
-            subtitle: pick[1]
-          });
-        } else {
-          text = getRandom(QUOTES);
-        }
-      }
+  // If packaging/product types are selected:
+  if(selectedProducts.length){
+    const defaults = GENRE_DEFAULTS[genre] || GENRE_DEFAULTS.urban_fiction;
+    const pick = getRandom(defaults);
 
+    const title = userTitle || pick[0];
+    const subtitle = userSubtitle || pick[1];
+
+    return buildPackagingPrompt({
+      locked,
+      palette,
+      accents,
+      productKey: selectedProducts[index % selectedProducts.length],
+      title,
+      subtitle
+    });
+  }
+
+  // Icon workflow:
+  let text = document.getElementById("quote").value.trim();
+  if(useRandom || !text){
+    text = getRandom(QUOTES);
+  }
+
+  // If user provided Title/Sub and no product selected, we can optionally use Title as the quote
+  // (handy when you want quote-only stickers that match your packaging line naming).
+  if(userTitle && !text){
+    text = userTitle;
+  }
+
+  if(type === "Icon + Quote"){
+    return `Urban fiction inspired sticker design (${vibe}), ${locked}, rich warm palette: ${paletteText(palette)}, main icon: ${object}, add accents: ${accents}, add caption text: “${text}” in bold modern typography, commercial clipart style, no realism, no brand logos, no watermark.`;
+  } else if(type === "Icon Only"){
+    return `Urban fiction inspired sticker icon (${vibe}), ${locked}, rich warm palette: ${paletteText(palette)}, main icon: ${object}, add accents: ${accents}, commercial clipart style, no text, no realism, no brand logos, no watermark.`;
+  } else {
+    return `Urban fiction quote sticker (${vibe}), ${locked}, rich warm palette: ${paletteText(palette)}, caption text only: “${text}” in bold modern typography, add small accent marks: ${accents}, commercial clipart style, no realism, no brand logos, no watermark.`;
+  }
+}
       // If product types selected AND user typed custom text:
       // Use that as MAIN TITLE and generate a genre subtitle automatically.
       if(selectedProducts.length){
@@ -756,6 +819,12 @@
       const count = parseInt(document.getElementById("count").value, 10);
       const selectedProducts = getSelectedValues(document.getElementById("products"));
 
+      const spiceLevel = document.getElementById("spice").value;
+      const spiceStampOn = document.getElementById("spiceStamp").checked;
+
+      const userTitle = document.getElementById("titleText").value.trim();
+      const userSubtitle = document.getElementById("subtitleText").value.trim();
+      
       const prompts = [];
       for(let i=0; i<count; i++){
         const p = buildSinglePrompt({
