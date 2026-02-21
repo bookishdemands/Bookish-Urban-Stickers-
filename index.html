@@ -953,7 +953,11 @@ Packaging tip:
       document.getElementById("useRandom").checked = true;
       document.getElementById("enhancedType").checked = true;
       document.getElementById("quote").value = "";
-
+      document.getElementById("titleText").value = "";
+      document.getElementById("subtitleText").value = "";
+      document.getElementById("spice").value = "3";
+      document.getElementById("spiceStamp").checked = true;
+      
       // clear product multiselect
       const products = document.getElementById("products");
       Array.from(products.options).forEach(o => o.selected = false);
