@@ -827,12 +827,13 @@
       
       const prompts = [];
       for(let i=0; i<count; i++){
-        const p = buildSinglePrompt({
-          genre, vibe, type, object, accents, palette, border, outline,
-          useRandom, enhancedType, selectedProducts, index: i
-        });
-        prompts.push(`Prompt ${i+1}:\n${p}`);
-      }
+  const p = buildSinglePrompt({
+    genre, vibe, type, object, accents, palette, border, outline,
+    useRandom, enhancedType, selectedProducts, index: i,
+    spiceLevel, spiceStampOn, userTitle, userSubtitle
+  });
+  prompts.push(`Prompt ${i+1}:\n${p}`);
+}
 
       const negative =
         "photorealistic, blurry, low-res, messy outline, uneven line weight, distorted anatomy, extra fingers, bad hands, watermark, signature, brand logos, copyrighted characters, celebrity likeness, random words, tiny unreadable text blocks, background scene, busy gradients, harsh shadows, poster design, UI elements";
