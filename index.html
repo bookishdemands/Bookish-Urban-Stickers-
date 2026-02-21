@@ -511,6 +511,11 @@ window.addEventListener("unhandledrejection", (e) => {
   const pill = document.getElementById("statusPill");
   if (pill) pill.textContent = "Error ❌";
 });
+
+function $(id){ return document.getElementById(id); }
+function val(id){ return ($(id) ? $(id).value : ""); }
+function setVal(id, v){ if($(id)) $(id).value = v; }
+function checked(id){ return ($(id) ? $(id).checked : false); }
     
     // ---- Quote bank: Urban-fiction-safe (mature vibe, not explicit) ----
     const QUOTES = [
