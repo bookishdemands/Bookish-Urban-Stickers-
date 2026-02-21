@@ -819,14 +819,6 @@
       const count = parseInt(document.getElementById("count").value, 10);
       const selectedProducts = getSelectedValues(document.getElementById("products"));
 
-      const spice = document.getElementById("spice");
-      const spiceStamp = document.getElementById("spiceStamp");
-      spice.selectedIndex = Math.floor(Math.random() * spice.options.length);
-      spiceStamp.checked = true;
-
-      document.getElementById("titleText").value = "";
-      document.getElementById("subtitleText").value = "";
-
       const userTitle = document.getElementById("titleText").value.trim();
       const userSubtitle = document.getElementById("subtitleText").value.trim();
       
@@ -925,6 +917,19 @@ Packaging tip:
       enhancedType.checked = true;
       document.getElementById("quote").value = "";
 
+      const spice = document.getElementById("spice");
+      const spiceStamp = document.getElementById("spiceStamp");
+
+      if (spice) {
+  spice.selectedIndex = Math.floor(Math.random() * spice.options.length);
+}
+      if (spiceStamp) {
+  spiceStamp.checked = true;
+}
+
+      document.getElementById("titleText").value = "";
+      document.getElementById("subtitleText").value = "";
+      
       // Randomly select 0–3 product types sometimes
       const products = document.getElementById("products");
       Array.from(products.options).forEach(o => o.selected = false);
