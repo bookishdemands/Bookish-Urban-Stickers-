@@ -819,8 +819,13 @@
       const count = parseInt(document.getElementById("count").value, 10);
       const selectedProducts = getSelectedValues(document.getElementById("products"));
 
-      const spiceLevel = document.getElementById("spice").value;
-      const spiceStampOn = document.getElementById("spiceStamp").checked;
+      const spice = document.getElementById("spice");
+      const spiceStamp = document.getElementById("spiceStamp");
+      spice.selectedIndex = Math.floor(Math.random() * spice.options.length);
+      spiceStamp.checked = true;
+
+      document.getElementById("titleText").value = "";
+      document.getElementById("subtitleText").value = "";
 
       const userTitle = document.getElementById("titleText").value.trim();
       const userSubtitle = document.getElementById("subtitleText").value.trim();
