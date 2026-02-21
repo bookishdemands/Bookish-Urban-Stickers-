@@ -495,6 +495,23 @@
   <div class="toast" id="toast">Copied!</div>
 
   <script>
+    // --- ON-SCREEN ERROR CAPTURE (mobile-safe) ---
+window.addEventListener("error", (e) => {
+  const msg = `❌ JS Error: ${e.message}\nAt: ${e.filename}:${e.lineno}:${e.colno}`;
+  const out = document.getElementById("promptOut");
+  if (out) out.value = msg;
+  const pill = document.getElementById("statusPill");
+  if (pill) pill.textContent = "Error ❌";
+});
+
+window.addEventListener("unhandledrejection", (e) => {
+  const msg = `❌ Promise Error: ${e.reason?.message || e.reason}`;
+  const out = document.getElementById("promptOut");
+  if (out) out.value = msg;
+  const pill = document.getElementById("statusPill");
+  if (pill) pill.textContent = "Error ❌";
+});
+    
     // ---- Quote bank: Urban-fiction-safe (mature vibe, not explicit) ----
     const QUOTES = [
       "He Don’t Play About Me.",
@@ -990,7 +1007,10 @@ Packaging tip:
       showToast("Cleared");
     }
 
-    document.getElementById("generateBtn").addEventListener("click", generate);
+    document.getElementById("generateBtn").addEventListener("click", () => {
+    document.getElementById("statusPill").textContent = "Clicked ✅";
+    generate();
+});
     document.getElementById("copyBtn").addEventListener("click", copyPrompt);
     document.getElementById("randomBtn").addEventListener("click", randomizeAll);
     document.getElementById("clearBtn").addEventListener("click", clearAll);
